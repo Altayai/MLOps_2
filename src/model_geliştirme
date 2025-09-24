@@ -1,0 +1,43 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+import joblib
+from pathlib import Path
+
+# Veri yolu
+feature_path = Path("data/processed/feature_data.csv")
+df = pd.read_csv(feature_path)
+
+# X, y ayır
+X = df.drop("target", axis=1)
+y = df["target"]
+
+# Train/Test ayır
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, stratify=y, random_state=42
+)
+
+# -------------------------
+# 🔹 Model 1: Random Forest
+# -------------------------
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+rf.fit(X_train, y_train)
+
+# -------------------------
+# 🔹 Model 2: Logistic Regression
+# -------------------------
+lr = LogisticRegression(max_iter=200)
+lr.fit(X_train, y_train)
+
+# -------------------------
+# 🔹 Modelleri kaydet
+# -------------------------
+models_dir = Path("models")
+models_dir.mkdir(parents=True, exist_ok=True)
+
+joblib.dump(rf, models_dir / "random_forest.joblib")
+joblib.dump(lr, models_dir / "logistic_regression.joblib")
+
+print("✅ Modeller başarıyla eğitildi ve 'models' klasörüne kaydedildi.")
+print("Eğitien modeller: Random Forest, Logistic Regression")

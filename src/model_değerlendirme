@@ -1,0 +1,70 @@
+import pandas as pd
+from sklearn.metrics import accuracy_score, classification_report
+import joblib
+import json
+from pathlib import Path
+
+# Veri yolu
+feature_path = Path("data/processed/feature_data.csv")
+df = pd.read_csv(feature_path)
+
+# X, y ayır
+X = df.drop("target", axis=1)
+y = df["target"]
+
+# Train/Test ayır (aynı random_state kullanmalıyız)
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, stratify=y, random_state=42
+)
+
+# -------------------------
+# 🔹 Modelleri yükle
+# -------------------------
+models_dir = Path("models")
+rf = joblib.load(models_dir / "random_forest.joblib")
+lr = joblib.load(models_dir / "logistic_regression.joblib")
+
+# -------------------------
+# 🔹 Tahmin ve metrikler
+# -------------------------
+metrics = {}
+
+# Random Forest
+rf_pred = rf.predict(X_test)
+metrics["random_forest"] = {
+    "accuracy": accuracy_score(y_test, rf_pred),
+    "report": classification_report(y_test, rf_pred, output_dict=True)
+}
+
+# Logistic Regression
+lr_pred = lr.predict(X_test)
+metrics["logistic_regression"] = {
+    "accuracy": accuracy_score(y_test, lr_pred),
+    "report": classification_report(y_test, lr_pred, output_dict=True)
+}
+
+# -------------------------
+# 🔹 Metrikleri kaydet
+# -------------------------
+metrics_dir = Path("metrics")
+metrics_dir.mkdir(parents=True, exist_ok=True)
+
+with open(metrics_dir / "metrics.json", "w") as f:
+    json.dump(metrics, f, indent=2)
+
+print("✅ Model değerlendirme tamamlandı. Sonuçlar 'metrics/metrics.json' dosyasına kaydedildi.")
+
+print("\n📊 Model Karşılaştırma Sonuçları")
+for model_name, result in metrics.items():
+    print(f"\n🔹 {model_name}")
+    print(f"Accuracy: {result['accuracy']:.4f}")
+    print("Classification Report:")
+    report = result["report"]
+    for label, scores in report.items():
+        if isinstance(scores, dict):
+            precision = scores["precision"]
+            recall = scores["recall"]
+            f1 = scores["f1-score"]
+            support = scores["support"]
+            print(f"  {label:<12} P: {precision:.2f} R: {recall:.2f} F1: {f1:.2f} (n={support})")

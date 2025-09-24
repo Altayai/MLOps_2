@@ -1,0 +1,33 @@
+import pandas as pd
+from pathlib import Path
+
+# Dosya yolları
+clean_path = Path("data/processed/clean_data.csv")
+processed_dir = Path("data/processed")
+processed_dir.mkdir(parents=True, exist_ok=True)
+
+# Veri setini oku
+df = pd.read_csv(clean_path)
+
+print("📊 Temiz veri boyutu:", df.shape)
+
+# ---------------------------
+# 🔹 Özellik mühendisliği
+# ---------------------------
+# 1. Sepal alanı = sepal length * sepal width
+df["sepal_area"] = df["sepal length (cm)"] * df["sepal width (cm)"]
+
+# 2. Petal alanı = petal length * petal width
+df["petal_area"] = df["petal length (cm)"] * df["petal width (cm)"]
+
+# 3. Petal oranı = petal length / (petal width + küçük epsilon)
+df["petal_ratio"] = df["petal length (cm)"] / (df["petal width (cm)"] + 1e-6)
+
+# 4. Sepal/Petal uzunluk oranı
+df["sepal_petal_length_ratio"] = df["sepal length (cm)"] / (df["petal length (cm)"] + 1e-6)
+
+# Sonucu kaydet
+feature_path = processed_dir / "feature_data.csv"
+df.to_csv(feature_path, index=False)
+
+print(f"✅ Özellik mühendisliği tamamlandı, kaydedildi: {feature_path}")

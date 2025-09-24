@@ -1,0 +1,33 @@
+import pandas as pd
+from pathlib import Path
+
+# Klasörleri hazırla
+raw_path = Path("data/raw/iris.csv")
+processed_dir = Path("data/processed")
+processed_dir.mkdir(parents=True, exist_ok=True)
+
+# Veri setini oku
+df = pd.read_csv(raw_path)
+
+print("📊 İlk 5 satır (temizlemeden önce):")
+print(df.head())
+
+# 🔹 Veri temizleme adımları
+# 1. Eksik değerleri düşür
+df = df.dropna()
+
+# 2. Yinelenen satırları sil
+df = df.drop_duplicates()
+
+# 3. Veri tiplerini kontrol et (gerekirse dönüştür)
+# Burada iris zaten sayısal → gerek yok ama genel mantık için örnek
+# df["target"] = df["target"].astype(int)
+
+print("📊 İlk 5 satır (temizledikten sonra):")
+print(df.head())
+
+# Temizlenmiş veriyi kaydet
+clean_path = processed_dir / "clean_data.csv"
+df.to_csv(clean_path, index=False)
+
+print(f"✅ Temizlenmiş veri kaydedildi: {clean_path}")
