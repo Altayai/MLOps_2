@@ -1,0 +1,66 @@
+schema: '2.0'
+stages:
+  clean:
+    cmd: python src/veri_temizleme.py
+    deps:
+    - path: data/raw/iris.csv
+      hash: md5
+      md5: 21d441a28bce4417276097df955afc50
+      size: 2928
+    - path: src/veri_temizleme.py
+      hash: md5
+      md5: 4845e614349ee42720c1975aa8c72955
+      size: 892
+    outs:
+    - path: data/processed/clean_data.csv
+      hash: md5
+      md5: 5ffa5eddc8501a79e589344ed4574b7b
+      size: 2909
+  features:
+    cmd: python src/feature_engineering.py
+    deps:
+    - path: data/processed/clean_data.csv
+      hash: md5
+      md5: 5ffa5eddc8501a79e589344ed4574b7b
+      size: 2909
+    - path: src/feature_engineering.py
+      hash: md5
+      md5: 71e017d69b61abfc217bc5a240189647
+      size: 1105
+    outs:
+    - path: data/processed/feature_data.csv
+      hash: md5
+      md5: e8f25c1fe7a7fcf2b2e0d83a9e7b1998
+      size: 11589
+  train:
+    cmd: python src/model_gelistirme.py
+    deps:
+    - path: data/processed/feature_data.csv
+      hash: md5
+      md5: e8f25c1fe7a7fcf2b2e0d83a9e7b1998
+      size: 11589
+    - path: src/model_gelistirme.py
+      hash: md5
+      md5: 4d04be84119ad58cc9afa6d802ed55b5
+      size: 1288
+    outs:
+    - path: models/random_forest.joblib
+      hash: md5
+      md5: 19d4ab24378e666ba2aabf169b1111d1
+      size: 162113
+  optimize:
+    cmd: python src/best_model_optimize.py
+    deps:
+    - path: data/processed/feature_data.csv
+      hash: md5
+      md5: e8f25c1fe7a7fcf2b2e0d83a9e7b1998
+      size: 11589
+    - path: src/best_model_optimize.py
+      hash: md5
+      md5: e58acf3c446127d67509e9e74a8a6ecd
+      size: 2415
+    outs:
+    - path: models/best_model.joblib
+      hash: md5
+      md5: 6d91533b6953a501de0226009fbbc506
+      size: 85393
