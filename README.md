@@ -160,7 +160,5 @@ dvc repro
 
 ## 🙏 Katkılar & Lisans
 
--   Katkılar memnuniyetle kabul edilir --- yeni modeller, hata
-    düzeltmeleri, iyileştirmeler ekleyebilirsin.\
--   Proje lisansını eklemek istersen (MIT, Apache 2.0 gibi) README'nin
-    sonuna lisans bölümünü yerleştirebilirsin.
+-   Katkılar memnuniyetle kabul edilir 
+-   Bu proje MIT lisansı altındadır.
